@@ -24,5 +24,5 @@ $ cd harrys-book-shop
 Run tests (currently failing) with
 
 ```bash
-$ python book_shop/tests.py
+$ python tests.py
 ```
