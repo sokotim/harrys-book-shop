@@ -11,12 +11,12 @@ class Volume(Enum):
 
 
 class BookInstance(object):
-    def __init__(self, volume: Volume):
+    def __init__(self, volume: Volume) -> None:
         self.volume = volume
 
 
 class Basket(object):
-    def __init__(self, items: Sequence[BookInstance] = []):
+    def __init__(self, items: Sequence[BookInstance] = []) -> None:
         self.items = items
 
     def get_total_price(self) -> int:
