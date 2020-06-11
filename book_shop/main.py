@@ -24,25 +24,25 @@ class Basket(object):
         self.items = items
 
     def get_total_price(self) -> float:
-        different_titles:List[BookInstance] = []
-        duplicate_titles:List[BookInstance] = []
+        sets: List[List[BookInstance]] = []
 
         for book_instance in self.items:
-            if book_instance.volume not in [book.volume for book in different_titles]:
-                different_titles.append(book_instance)
-            else:
-                duplicate_titles.append(book_instance)
+            create_new_set = True
+            for set in sets:
+                if book_instance.volume not in [book.volume for book in set]:
+                    set.append(book_instance)
+                    create_new_set = False
+                    break
+            if create_new_set:
+                sets.append([book_instance])
 
-        amount_of_different_titles = len(different_titles)
-        discount_for_different_titles = Basket.discounts.get(
-            amount_of_different_titles, 0
-        )
-        different_titles_price = sum([book.price for book in different_titles])
-        different_titles_price_discounted = different_titles_price * (
-            1 - discount_for_different_titles
-        )
-        duplicate_titles_price = sum([book.price for book in duplicate_titles])
+        total_price = 0
 
-        total_price = different_titles_price_discounted + duplicate_titles_price
+        for set in sets:
+            num_books_in_set = len(set)
+            set_discount = self.discounts[num_books_in_set]
+            set_price = sum([book.price for book in set])
+            set_price_discounted = set_price * (1 - set_discount)
+            total_price += set_price_discounted
 
         return total_price
