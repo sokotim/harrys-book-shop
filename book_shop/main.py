@@ -26,19 +26,40 @@ class Basket(object):
     def get_sets(self) -> List[List[BookInstance]]:
         sets: List[List[BookInstance]] = []
         for book_instance in self.items:
-            create_new_set = True
-            for set in sets:
+            set_candidate_indices: List[int] = []
+
+            for set_num, set in enumerate(sets):
                 if book_instance.volume not in [book.volume for book in set]:
-                    set.append(book_instance)
-                    create_new_set = False
-                    break
-            if create_new_set:
+                    set_candidate_indices.append(set_num)
+            if len(set_candidate_indices) > 1:
+                min_total_price: float = float("inf")
+                best_candidate_index: int = 0
+                for set_candidate_index in set_candidate_indices:
+                    total_price_with_book_in_this_set: float = 0.0
+                    for set_index, set in enumerate(sets):
+                        if set_index == set_candidate_index:
+                            set_with_book = set + [book_instance]
+                            total_price_with_book_in_this_set += self.get_discounted_set_price(
+                                set_with_book
+                            )
+                        else:
+                            total_price_with_book_in_this_set += self.get_discounted_set_price(
+                                set
+                            )
+                    if total_price_with_book_in_this_set < min_total_price:
+                        min_total_price = total_price_with_book_in_this_set
+                        best_candidate_index = set_candidate_index
+                sets[best_candidate_index].append(book_instance)
+
+            elif len(set_candidate_indices) == 1:
+                sets[set_candidate_indices[0]].append(book_instance)
+            else:
                 sets.append([book_instance])
         return sets
 
     def get_discounted_set_price(self, set: List[BookInstance]) -> float:
         num_books_in_set = len(set)
-        set_discount = self.discounts[num_books_in_set]
+        set_discount = self.discounts.get(num_books_in_set, 0.0)
         set_price = sum([book.price for book in set])
         set_price_discounted = set_price * (1 - set_discount)
         return set_price_discounted
