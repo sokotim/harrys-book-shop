@@ -21,7 +21,7 @@ Change into project directory
 $ cd harrys-book-shop
 ```
 
-Run tests (currently failing) with
+Run tests with
 
 ```bash
 $ python tests.py
