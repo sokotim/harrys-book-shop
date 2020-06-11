@@ -23,9 +23,8 @@ class Basket(object):
     def __init__(self, items: List[BookInstance] = []) -> None:
         self.items = items
 
-    def get_total_price(self) -> float:
+    def get_sets(self) -> List[List[BookInstance]]:
         sets: List[List[BookInstance]] = []
-
         for book_instance in self.items:
             create_new_set = True
             for set in sets:
@@ -35,14 +34,19 @@ class Basket(object):
                     break
             if create_new_set:
                 sets.append([book_instance])
+        return sets
 
-        total_price = 0
+    def get_discounted_set_price(self, set: List[BookInstance]) -> float:
+        num_books_in_set = len(set)
+        set_discount = self.discounts[num_books_in_set]
+        set_price = sum([book.price for book in set])
+        set_price_discounted = set_price * (1 - set_discount)
+        return set_price_discounted
 
-        for set in sets:
-            num_books_in_set = len(set)
-            set_discount = self.discounts[num_books_in_set]
-            set_price = sum([book.price for book in set])
-            set_price_discounted = set_price * (1 - set_discount)
-            total_price += set_price_discounted
+    def get_total_price(self) -> float:
+        total_price: float = 0
+
+        for set in self.get_sets():
+            total_price += self.get_discounted_set_price(set)
 
         return total_price
