@@ -21,5 +21,17 @@ def test_total_price():
     assert basket.get_total_price() == 51.20
 
 
+def test_total_price_unsortet():
+    all_five_volumes = [BookInstance(volume) for volume in list(Volume)]
+    just_the_first_three_volumes = [
+        BookInstance(volume) for volume in [Volume.FIRST, Volume.SECOND, Volume.THIRD]
+    ]
+    items = all_five_volumes + just_the_first_three_volumes
+    basket = Basket(items)
+
+    assert basket.get_total_price() == 51.20
+
+
 if __name__ == "__main__":
     test_total_price()
+    test_total_price_unsortet()

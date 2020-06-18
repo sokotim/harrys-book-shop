@@ -1,8 +1,9 @@
-from enum import Enum
+from enum import IntEnum, unique
 from typing import List
 
 
-class Volume(Enum):
+@unique
+class Volume(IntEnum):
     FIRST = 1
     SECOND = 2
     THIRD = 3
@@ -24,6 +25,7 @@ class Basket(object):
         self.items = items
 
     def get_sets(self) -> List[List[BookInstance]]:
+        self.items.sort(key=lambda book_instance: book_instance.volume)
         sets: List[List[BookInstance]] = []
         for book_instance in self.items:
             set_candidate_indices: List[int] = []
